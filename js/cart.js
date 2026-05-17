@@ -104,6 +104,8 @@
   // ── Auth helpers ──────────────────────────────────────────────────────────
 
   function getUser() {
+    // PHP pages inject window._gbUser from $_SESSION — use that first.
+    if (window._gbUser) return window._gbUser;
     try { return JSON.parse(localStorage.getItem(USER_KEY) || "null"); }
     catch (e) { return null; }
   }
@@ -114,7 +116,13 @@
 
   function signOut() {
     localStorage.removeItem(USER_KEY);
-    window.location.href = "index.html";
+    // If a PHP session exists, destroy it via the API endpoint.
+    var apiBase = window._gbUser ? "api/logout.php" : null;
+    if (apiBase) {
+      window.location.href = apiBase;
+    } else {
+      window.location.href = "signin.php";
+    }
   }
 
   function updateNavAuth() {
@@ -122,10 +130,12 @@
     var signInLink = document.getElementById("navSignIn");
     if (!signInLink) return;
 
+    // PHP pages handle the nav label server-side; only update on static pages.
+    if (window._gbUser) return;
+
     if (user) {
       var firstName = user.name.split(" ")[0];
       signInLink.querySelector(".nav-action-label").textContent = firstName;
-      signInLink.href = "account.html";
       signInLink.title = "Signed in as " + user.name;
     }
   }
