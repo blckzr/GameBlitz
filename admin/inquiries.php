@@ -17,15 +17,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['inquiry_id'])) {
     exit;
 }
 
-$filterStatus = $_GET['status'] ?? '';
-$whereClause  = $filterStatus ? "WHERE status = " . $pdo->quote($filterStatus) : '';
+$validStatuses = ['open', 'in_progress', 'resolved', 'closed'];
+$filterStatus  = in_array($_GET['status'] ?? '', $validStatuses) ? $_GET['status'] : '';
 
-$inquiries = $pdo->query("
+$params = [];
+$where  = '';
+if ($filterStatus) {
+    $where    = 'WHERE status = ?';
+    $params[] = $filterStatus;
+}
+
+$stmt = $pdo->prepare("
     SELECT inquiry_id, name, email, category, order_number, subject, message, status, created_at
     FROM   inquiries
-    $whereClause
+    $where
     ORDER  BY created_at DESC
-")->fetchAll();
+");
+$stmt->execute($params);
+$inquiries = $stmt->fetchAll();
 
 $counts = $pdo->query("
     SELECT status, COUNT(*) AS cnt
@@ -103,6 +112,7 @@ $counts = $pdo->query("
           <li><a href="index.php" class="admin-nav-link">&#128202; Dashboard</a></li>
           <li><a href="products.php" class="admin-nav-link">&#127918; Products</a></li>
           <li><a href="users.php" class="admin-nav-link">&#128101; Users</a></li>
+          <li><a href="orders.php" class="admin-nav-link">&#128230; Orders</a></li>
           <li><a href="inquiries.php" class="admin-nav-link active">&#128140; Inquiries</a></li>
           <li class="admin-nav-divider"></li>
           <li><a href="../index.php" class="admin-nav-link">&#127968; View Store</a></li>

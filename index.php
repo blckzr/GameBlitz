@@ -93,7 +93,7 @@ function carouselSuffix(string $badge): string {
           <ul>
             <li><a href="index.php" class="nav-btn active">Home</a></li>
             <li><a href="products.php" class="nav-btn">Products</a></li>
-            <li><a href="contact.html" class="nav-btn">Contact</a></li>
+            <li><a href="contact.php" class="nav-btn">Contact</a></li>
           </ul>
         </nav>
 
@@ -293,7 +293,7 @@ function carouselSuffix(string $badge): string {
         <div>
           <h5>Support</h5>
           <ul>
-            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="contact.php">Contact Us</a></li>
             <li><a href="#">Order Tracking</a></li>
             <li><a href="#">Warranty</a></li>
             <li><a href="#">Store Locator</a></li>

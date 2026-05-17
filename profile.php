@@ -147,8 +147,10 @@ $statusColors = [
     .order-item:last-child { border-bottom: none; }
     .order-number { font-weight: 700; font-family: monospace; letter-spacing: 0.05em; }
     .order-meta   { font-size: 0.82rem; color: var(--text-muted, #888); margin-top: 2px; }
-    .order-status-paid      { color: #4ade80; font-weight: 600; font-size: 0.85rem; }
+    .order-status-confirmed { color: #4ade80; font-weight: 600; font-size: 0.85rem; }
     .order-status-pending   { color: #fbbf24; font-weight: 600; font-size: 0.85rem; }
+    .order-status-shipped   { color: #60a5fa; font-weight: 600; font-size: 0.85rem; }
+    .order-status-completed { color: #a78bfa; font-weight: 600; font-size: 0.85rem; }
     .order-status-cancelled { color: #f87171; font-weight: 600; font-size: 0.85rem; }
     .empty-placeholder {
       text-align: center;
@@ -171,7 +173,7 @@ $statusColors = [
         <ul>
           <li><a href="index.php" class="nav-btn">Home</a></li>
           <li><a href="products.php" class="nav-btn">Products</a></li>
-          <li><a href="contact.html" class="nav-btn">Contact</a></li>
+          <li><a href="contact.php" class="nav-btn">Contact</a></li>
         </ul>
       </nav>
       <div class="nav-actions">
@@ -315,7 +317,7 @@ $statusColors = [
         <?php else: ?>
         <div class="empty-placeholder">
           <p>&#128140; You haven&rsquo;t submitted any inquiries yet.</p>
-          <a href="contact.html" class="btn-secondary" style="display:inline-block;margin-top:12px">Contact Support</a>
+          <a href="contact.php" class="btn-secondary" style="display:inline-block;margin-top:12px">Contact Support</a>
         </div>
         <?php endif; ?>
       </div>
@@ -338,7 +340,7 @@ $statusColors = [
       <div>
         <h5>Support</h5>
         <ul>
-          <li><a href="contact.html">Contact Us</a></li>
+          <li><a href="contact.php">Contact Us</a></li>
         </ul>
       </div>
     </div>

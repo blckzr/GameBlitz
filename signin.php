@@ -27,7 +27,7 @@ if (!empty($_SESSION['user_id'])) {
         <ul>
           <li><a href="index.html" class="nav-btn">Home</a></li>
           <li><a href="products.php" class="nav-btn">Products</a></li>
-          <li><a href="contact.html" class="nav-btn">Contact</a></li>
+          <li><a href="contact.php" class="nav-btn">Contact</a></li>
         </ul>
       </nav>
       <div class="nav-actions">

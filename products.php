@@ -62,7 +62,7 @@ function badgeLabel(string $badge, int $price, ?int $sale): string {
         <ul>
           <li><a href="index.php" class="nav-btn">Home</a></li>
           <li><a href="products.php" class="nav-btn active">Products</a></li>
-          <li><a href="contact.html" class="nav-btn">Contact</a></li>
+          <li><a href="contact.php" class="nav-btn">Contact</a></li>
         </ul>
       </nav>
       <div class="nav-actions">
@@ -164,6 +164,7 @@ function badgeLabel(string $badge, int $price, ?int $sale): string {
         data-category="<?= htmlspecialchars($p['category_slug']) ?>"
         data-stock="<?= (int) $p['stock'] ?>"
         data-badge="<?= htmlspecialchars($badge) ?>"
+        data-description="<?= htmlspecialchars($p['description'] ?? '') ?>"
       >
         <div class="card-media">
           <?php if ($badge): $lbl = badgeLabel($badge, $price, $sale); ?>
@@ -215,7 +216,7 @@ function badgeLabel(string $badge, int $price, ?int $sale): string {
       <div>
         <h5>Support</h5>
         <ul>
-          <li><a href="contact.html">Contact Us</a></li>
+          <li><a href="contact.php">Contact Us</a></li>
           <li><a href="#">Order Tracking</a></li>
           <li><a href="#">Warranty</a></li>
         </ul>

@@ -111,6 +111,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <li><a href="index.php" class="admin-nav-link">&#128202; Dashboard</a></li>
           <li><a href="products.php" class="admin-nav-link">&#127918; Products</a></li>
           <li><a href="users.php" class="admin-nav-link active">&#128101; Users</a></li>
+          <li><a href="orders.php" class="admin-nav-link">&#128230; Orders</a></li>
           <li><a href="inquiries.php" class="admin-nav-link">&#128140; Inquiries</a></li>
           <li class="admin-nav-divider"></li>
           <li><a href="../index.php" class="admin-nav-link">&#127968; View Store</a></li>

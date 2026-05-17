@@ -52,6 +52,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $values['is_active']   = isset($_POST['is_active']) ? 1 : 0;
     $values['platforms']   = array_map('intval', $_POST['platforms'] ?? []);
 
+    // Process file upload first so $values['image_url'] is set before validation
+    if (!empty($_FILES['image_file']['name']) && $_FILES['image_file']['error'] === UPLOAD_ERR_OK) {
+        $finfo   = new finfo(FILEINFO_MIME_TYPE);
+        $mime    = $finfo->file($_FILES['image_file']['tmp_name']);
+        $allowed = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/jpg' => 'jpg'];
+        if (!isset($allowed[$mime])) {
+            $errors['image_url'] = 'Only JPG, JPEG, and PNG images are allowed.';
+        } else {
+            $ext     = $allowed[$mime];
+            $base    = preg_replace('/[^a-z0-9\-]/', '', strtolower(str_replace(' ', '-', trim($_POST['name'] ?? '') ?: 'product')));
+            $base    = trim($base, '-') ?: 'product';
+            $dest    = __DIR__ . '/../assets/img/' . $base . '.' . $ext;
+            $counter = 1;
+            while (file_exists($dest)) {
+                $dest = __DIR__ . '/../assets/img/' . $base . '-' . $counter++ . '.' . $ext;
+            }
+            if (move_uploaded_file($_FILES['image_file']['tmp_name'], $dest)) {
+                $values['image_url'] = 'assets/img/' . basename($dest);
+            } else {
+                $errors['image_url'] = 'Upload failed. Check folder permissions on assets/img/.';
+            }
+        }
+    } elseif (!empty($_FILES['image_file']['error']) && $_FILES['image_file']['error'] === UPLOAD_ERR_INI_SIZE) {
+        $errors['image_url'] = 'File is too large. Maximum allowed size is ' . ini_get('upload_max_filesize') . '.';
+    }
+
     // Validation
     if (strlen($values['name']) < 2) {
         $errors['name'] = 'Name must be at least 2 characters.';
@@ -65,35 +91,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($values['sale_price'] !== '' && (!is_numeric($values['sale_price']) || (float) $values['sale_price'] >= (float) $values['price'])) {
         $errors['sale_price'] = 'Sale price must be less than the base price.';
     }
-    if (!$values['image_url']) {
-        $errors['image_url'] = 'Image URL/path is required.';
-    }
     if ($values['stock'] < 0) {
         $errors['stock'] = 'Stock cannot be negative.';
-    }
-
-    // Handle file upload
-    if (!empty($_FILES['image_file']['name']) && $_FILES['image_file']['error'] === UPLOAD_ERR_OK) {
-        $finfo   = new finfo(FILEINFO_MIME_TYPE);
-        $mime    = $finfo->file($_FILES['image_file']['tmp_name']);
-        $allowed = ['image/jpeg' => 'jpg', 'image/png' => 'png'];
-        if (!isset($allowed[$mime])) {
-            $errors['image_url'] = 'Only JPEG and PNG images are allowed.';
-        } else {
-            $ext     = $allowed[$mime];
-            $base    = preg_replace('/[^a-z0-9\-]/', '', strtolower(str_replace(' ', '-', $values['name'] ?: 'product')));
-            $base    = trim($base, '-') ?: 'product';
-            $dest    = __DIR__ . '/../assets/img/' . $base . '.' . $ext;
-            $counter = 1;
-            while (file_exists($dest)) {
-                $dest = __DIR__ . '/../assets/img/' . $base . '-' . $counter++ . '.' . $ext;
-            }
-            if (move_uploaded_file($_FILES['image_file']['tmp_name'], $dest)) {
-                $values['image_url'] = 'assets/img/' . basename($dest);
-            } else {
-                $errors['image_url'] = 'Upload failed. Check folder permissions on assets/img/.';
-            }
-        }
     }
 
     if (!$errors) {
@@ -157,6 +156,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           <li><a href="index.php" class="admin-nav-link">&#128202; Dashboard</a></li>
           <li><a href="products.php" class="admin-nav-link active">&#127918; Products</a></li>
           <li><a href="users.php" class="admin-nav-link">&#128101; Users</a></li>
+          <li><a href="orders.php" class="admin-nav-link">&#128230; Orders</a></li>
           <li><a href="inquiries.php" class="admin-nav-link">&#128140; Inquiries</a></li>
           <li class="admin-nav-divider"></li>
           <li><a href="../index.php" class="admin-nav-link">&#127968; View Store</a></li>
@@ -247,7 +247,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               <div class="upload-zone-body" id="uploadZoneBody">
                 <span class="upload-zone-icon">&#128444;</span>
                 <p class="upload-zone-text">Click or drag &amp; drop to replace image</p>
-                <p class="upload-zone-hint">JPEG or PNG &bull; max 5 MB &bull; leave empty to keep current</p>
+                <p class="upload-zone-hint">JPG, JPEG or PNG &bull; max 10 MB &bull; leave empty to keep current</p>
               </div>
             </div>
             <?php if (!empty($errors['image_url'])): ?><span class="form-error"><?= htmlspecialchars($errors['image_url']) ?></span><?php endif; ?>
@@ -303,19 +303,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   zone.addEventListener('dragleave', function ()  { zone.classList.remove('drag-over'); });
   zone.addEventListener('drop', function (e) {
     e.preventDefault(); zone.classList.remove('drag-over');
-    if (e.dataTransfer.files.length) { input.files = e.dataTransfer.files; showPreview(e.dataTransfer.files[0]); }
+    if (e.dataTransfer.files.length) { input.files = e.dataTransfer.files; handleFile(e.dataTransfer.files[0]); }
   });
   input.addEventListener('change', function () {
-    if (input.files.length) showPreview(input.files[0]);
+    if (input.files.length) handleFile(input.files[0]);
   });
+
+  function handleFile(file) {
+    var maxBytes = 10 * 1024 * 1024;
+    var allowed  = ['image/jpeg', 'image/jpg', 'image/png'];
+    if (!allowed.includes(file.type)) {
+      alert('Only JPG, JPEG, and PNG images are allowed.');
+      input.value = ''; return;
+    }
+    if (file.size > maxBytes) {
+      alert('File is too large (' + (file.size / 1024 / 1024).toFixed(1) + ' MB). Maximum is 10 MB.');
+      input.value = ''; return;
+    }
+    showPreview(file);
+  }
 
   function showPreview(file) {
     var reader = new FileReader();
     reader.onload = function (e) {
-      preview.innerHTML = '<img src="' + e.target.result + '" alt="Preview" /><div><strong>' + file.name + '</strong><br><span>' + (file.size / 1024).toFixed(0) + ' KB</span></div><button type="button" class="upload-clear-btn" title="Remove">&#10005;</button>';
+      var sizeLabel = file.size >= 1024 * 1024
+        ? (file.size / 1024 / 1024).toFixed(1) + ' MB'
+        : (file.size / 1024).toFixed(0) + ' KB';
+      preview.innerHTML = '<img src="' + e.target.result + '" alt="Preview" /><div><strong>' + file.name + '</strong><br><span>' + sizeLabel + '</span></div><button type="button" class="upload-clear-btn" title="Remove">&#10005;</button>';
       preview.style.display = 'flex';
       preview.querySelector('.upload-clear-btn').addEventListener('click', function () {
         input.value = ''; preview.style.display = 'none'; preview.innerHTML = '';
+        body.querySelector('.upload-zone-text').textContent = 'Click or drag & drop to replace image';
       });
       body.querySelector('.upload-zone-text').textContent = 'New image selected — click to change';
     };

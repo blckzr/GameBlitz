@@ -38,22 +38,25 @@ $pdo->beginTransaction();
 try {
     $stmt = $pdo->prepare("
         INSERT INTO orders (user_id, order_number, total_amount, status)
-        VALUES (?, ?, ?, 'paid')
+        VALUES (?, ?, ?, 'confirmed')
     ");
     $stmt->execute([$_SESSION['user_id'], $orderNumber, $total]);
     $orderId = (int) $pdo->lastInsertId();
 
     $itemStmt = $pdo->prepare("
-        INSERT INTO order_items (order_id, product_id, product_name, unit_price, quantity)
-        VALUES (?, ?, ?, ?, ?)
+        INSERT INTO order_items (order_id, product_id, product_name, unit_price, quantity, subtotal)
+        VALUES (?, ?, ?, ?, ?, ?)
     ");
     foreach ($items as $item) {
+        $qty      = max(1, (int) ($item['quantity'] ?? 1));
+        $price    = (float) ($item['price'] ?? 0);
         $itemStmt->execute([
             $orderId,
             (int) ($item['productId'] ?? 0) ?: null,
             htmlspecialchars(strip_tags($item['name'] ?? 'Product')),
-            (float) ($item['price'] ?? 0),
-            max(1, (int) ($item['quantity'] ?? 1)),
+            $price,
+            $qty,
+            $price * $qty,
         ]);
     }
 

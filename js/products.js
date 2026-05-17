@@ -70,6 +70,7 @@
     const basePrice = card.dataset.price || "0";
     const platforms = (card.dataset.platform || "").split(",").filter(Boolean);
     const badge = card.dataset.badge || "";
+    const description = card.dataset.description || "";
 
     const priceHTML = salePrice && salePrice !== ""
       ? '<span class="price-current">&#8369;' + fmt(salePrice) + "</span>" +
@@ -82,6 +83,10 @@
 
     const btnLabel = badge === "preorder" ? "Pre-Order Now" : "Add to Cart";
 
+    const descHTML = description
+      ? '<p class="modal-description">' + description + "</p>"
+      : "";
+
     const modal = document.createElement("div");
     modal.className = "modal-overlay";
     modal.innerHTML =
@@ -92,6 +97,7 @@
           '<div class="modal-platforms">' + platformHTML + "</div>" +
           "<h2>" + name + "</h2>" +
           '<p class="modal-price">' + priceHTML + "</p>" +
+          descHTML +
           '<button class="modal-add-cart">' + btnLabel + "</button>" +
         "</div>" +
       "</div>";
