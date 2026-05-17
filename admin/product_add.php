@@ -19,7 +19,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $values['description'] = trim($_POST['description'] ?? '');
     $values['price']       = trim($_POST['price'] ?? '');
     $values['sale_price']  = trim($_POST['sale_price'] ?? '');
-    $values['image_url']   = trim($_POST['image_url'] ?? '');
     $values['stock']       = (int) ($_POST['stock'] ?? 0);
     $values['badge']       = $_POST['badge'] ?? '';
     $values['is_featured'] = isset($_POST['is_featured']) ? 1 : 0;
@@ -39,10 +38,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors['sale_price'] = 'Sale price must be less than the base price.';
     }
     if (!$values['image_url']) {
-        $errors['image_url'] = 'Image URL/path is required.';
+        $errors['image_url'] = 'Please upload a product image (JPEG or PNG).';
     }
     if ($values['stock'] < 0) {
         $errors['stock'] = 'Stock cannot be negative.';
+    }
+
+    // Handle file upload before validation
+    if (!empty($_FILES['image_file']['name']) && $_FILES['image_file']['error'] === UPLOAD_ERR_OK) {
+        $finfo    = new finfo(FILEINFO_MIME_TYPE);
+        $mime     = $finfo->file($_FILES['image_file']['tmp_name']);
+        $allowed  = ['image/jpeg' => 'jpg', 'image/png' => 'png'];
+        if (!isset($allowed[$mime])) {
+            $errors['image_url'] = 'Only JPEG and PNG images are allowed.';
+        } else {
+            $ext      = $allowed[$mime];
+            $base     = preg_replace('/[^a-z0-9\-]/', '', strtolower(str_replace(' ', '-', $values['name'] ?: 'product')));
+            $base     = trim($base, '-') ?: 'product';
+            $dest     = __DIR__ . '/../assets/img/' . $base . '.' . $ext;
+            $counter  = 1;
+            while (file_exists($dest)) {
+                $dest = __DIR__ . '/../assets/img/' . $base . '-' . $counter++ . '.' . $ext;
+            }
+            if (move_uploaded_file($_FILES['image_file']['tmp_name'], $dest)) {
+                $values['image_url'] = 'assets/img/' . basename($dest);
+            } else {
+                $errors['image_url'] = 'Upload failed. Check folder permissions on assets/img/.';
+            }
+        }
     }
 
     if (!$errors) {
@@ -107,14 +130,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <aside class="admin-sidebar">
       <div class="admin-brand">
-        <a href="../index.html" class="logo">Game<span>Blitz</span></a>
+        <a href="../index.php" class="logo">Game<span>Blitz</span></a>
         <span class="admin-badge">Admin</span>
       </div>
       <nav class="admin-nav">
         <ul>
+          <li><a href="index.php" class="admin-nav-link">&#128202; Dashboard</a></li>
           <li><a href="products.php" class="admin-nav-link active">&#127918; Products</a></li>
+          <li><a href="users.php" class="admin-nav-link">&#128101; Users</a></li>
+          <li><a href="inquiries.php" class="admin-nav-link">&#128140; Inquiries</a></li>
           <li class="admin-nav-divider"></li>
-          <li><a href="../index.html" class="admin-nav-link">&#127968; View Store</a></li>
+          <li><a href="../index.php" class="admin-nav-link">&#127968; View Store</a></li>
           <li><a href="../api/logout.php" class="admin-nav-link admin-nav-logout">&#128682; Sign Out</a></li>
         </ul>
       </nav>
@@ -132,7 +158,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       </div>
 
       <div class="admin-card admin-form-card">
-        <form method="POST" class="admin-form">
+        <form method="POST" class="admin-form" enctype="multipart/form-data">
 
           <div class="form-row">
             <div class="form-group form-group-grow">
@@ -187,8 +213,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
           </div>
 
           <div class="form-group">
-            <label for="image_url">Image Path <span class="req">*</span></label>
-            <input type="text" id="image_url" name="image_url" placeholder="assets/img/game.jpg" value="<?= htmlspecialchars($values['image_url']) ?>" />
+            <label>Product Image <span class="req">*</span></label>
+            <div class="upload-zone" id="uploadZone">
+              <input type="file" id="image_file" name="image_file" accept=".jpg,.jpeg,.png" />
+              <div class="upload-zone-body" id="uploadZoneBody">
+                <span class="upload-zone-icon">&#128444;</span>
+                <p class="upload-zone-text">Click or drag &amp; drop to upload</p>
+                <p class="upload-zone-hint">JPEG or PNG &bull; max 5 MB</p>
+              </div>
+            </div>
+            <div class="upload-preview" id="uploadPreview" style="display:none"></div>
             <?php if (!empty($errors['image_url'])): ?><span class="form-error"><?= htmlspecialchars($errors['image_url']) ?></span><?php endif; ?>
           </div>
 
@@ -222,5 +256,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </main>
 
   </div>
+<script>
+(function () {
+  var zone    = document.getElementById('uploadZone');
+  var input   = document.getElementById('image_file');
+  var body    = document.getElementById('uploadZoneBody');
+  var preview = document.getElementById('uploadPreview');
+  if (!zone || !input) return;
+
+  zone.addEventListener('dragover',  function (e) { e.preventDefault(); zone.classList.add('drag-over'); });
+  zone.addEventListener('dragleave', function ()  { zone.classList.remove('drag-over'); });
+  zone.addEventListener('drop', function (e) {
+    e.preventDefault(); zone.classList.remove('drag-over');
+    if (e.dataTransfer.files.length) { input.files = e.dataTransfer.files; showPreview(e.dataTransfer.files[0]); }
+  });
+  input.addEventListener('change', function () {
+    if (input.files.length) showPreview(input.files[0]);
+  });
+
+  function showPreview(file) {
+    var reader = new FileReader();
+    reader.onload = function (e) {
+      preview.innerHTML = '<img src="' + e.target.result + '" alt="Preview" /><div><strong>' + file.name + '</strong><br><span>' + (file.size / 1024).toFixed(0) + ' KB</span></div><button type="button" class="upload-clear-btn" title="Remove">&#10005;</button>';
+      preview.style.display = 'flex';
+      preview.querySelector('.upload-clear-btn').addEventListener('click', function () {
+        input.value = ''; preview.style.display = 'none'; preview.innerHTML = '';
+      });
+      body.querySelector('.upload-zone-text').textContent = 'Image selected — click to change';
+    };
+    reader.readAsDataURL(file);
+  }
+})();
+</script>
 </body>
 </html>

@@ -135,7 +135,8 @@
 
     if (user) {
       var firstName = user.name.split(" ")[0];
-      signInLink.querySelector(".nav-action-label").textContent = firstName;
+      signInLink.querySelector(".nav-action-label").textContent = firstName + " ▾";
+      signInLink.href  = "profile.php";
       signInLink.title = "Signed in as " + user.name;
     }
   }
@@ -150,6 +151,29 @@
       toggleBtn.setAttribute("aria-expanded", String(isOpen));
     });
   }
+
+  // ── Nav user dropdown (click to open/close) ───────────────────────────────
+
+  document.addEventListener('click', function (e) {
+    var toggle   = e.target.closest('.nav-user-menu > .nav-action');
+    var insideDrop = e.target.closest('.nav-user-dropdown');
+
+    if (toggle) {
+      e.preventDefault();
+      var menu = toggle.closest('.nav-user-menu');
+      var isOpen = menu.classList.toggle('open');
+      document.querySelectorAll('.nav-user-menu.open').forEach(function (m) {
+        if (m !== menu) m.classList.remove('open');
+      });
+      return;
+    }
+
+    if (!insideDrop) {
+      document.querySelectorAll('.nav-user-menu.open').forEach(function (m) {
+        m.classList.remove('open');
+      });
+    }
+  });
 
   // ── Init ──────────────────────────────────────────────────────────────────
 

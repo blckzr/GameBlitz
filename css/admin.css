@@ -364,6 +364,8 @@
 
 .admin-form input[type="text"],
 .admin-form input[type="number"],
+.admin-form input[type="email"],
+.admin-form input[type="password"],
 .admin-form select,
 .admin-form textarea {
   width: 100%;
@@ -378,7 +380,16 @@
   transition: border-color 0.15s;
 }
 
-.admin-form input:focus,
+.admin-form input[disabled] {
+  background: #f5f6fa;
+  color: #6b7a99;
+  cursor: not-allowed;
+}
+
+.admin-form input[type="text"]:focus,
+.admin-form input[type="number"]:focus,
+.admin-form input[type="email"]:focus,
+.admin-form input[type="password"]:focus,
 .admin-form select:focus,
 .admin-form textarea:focus {
   outline: none;
@@ -423,6 +434,98 @@
   accent-color: var(--accent, #bb86fc);
   cursor: pointer;
 }
+
+/* ── Upload zone ─────────────────────────────────────────────────────────── */
+
+.upload-zone {
+  position: relative;
+  border: 2px dashed #d0d7e3;
+  border-radius: 10px;
+  padding: 2rem 1.5rem;
+  text-align: center;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  background: #fafbfd;
+}
+
+.upload-zone input[type="file"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+}
+
+.upload-zone:hover,
+.upload-zone.drag-over {
+  border-color: var(--accent, #bb86fc);
+  background: rgba(187, 134, 252, 0.05);
+}
+
+.upload-zone.drag-over { border-style: solid; }
+
+.upload-zone-icon {
+  font-size: 2.25rem;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.upload-zone-text {
+  margin: 0 0 4px;
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.9rem;
+}
+
+.upload-zone-hint {
+  margin: 0;
+  font-size: 0.78rem;
+  color: #9ca3af;
+}
+
+.upload-preview {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  background: #f5f6fa;
+  border-radius: 8px;
+  border: 1px solid #e0e6f0;
+  margin-top: 10px;
+}
+
+.upload-preview img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.upload-preview div { flex: 1; font-size: 0.85rem; color: #374151; }
+.upload-preview div strong { display: block; font-weight: 600; }
+.upload-preview div span { color: #9ca3af; font-size: 0.78rem; }
+
+.upload-clear-btn {
+  background: none;
+  border: 1px solid #d0d7e3;
+  border-radius: 4px;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #9ca3af;
+  font-size: 0.75rem;
+  flex-shrink: 0;
+  z-index: 3;
+  position: relative;
+}
+
+.upload-clear-btn:hover { background: #fef2f2; color: #dc2626; border-color: #fca5a5; }
 
 .admin-img-preview {
   display: block;

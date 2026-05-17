@@ -1,9 +1,9 @@
-// Cart page — renders and manages the cart item list
+// Cart page — renders cart items and handles checkout
 (function () {
-  var itemList   = document.getElementById("cartItemList");
-  var emptyState = document.getElementById("cartEmpty");
-  var cartActions = document.getElementById("cartActions");
-  var orderSummary = document.getElementById("orderSummary");
+  var itemList        = document.getElementById("cartItemList");
+  var emptyState      = document.getElementById("cartEmpty");
+  var cartActions     = document.getElementById("cartActions");
+  var orderSummary    = document.getElementById("orderSummary");
   var summarySubtotal = document.getElementById("summarySubtotal");
   var summaryTotal    = document.getElementById("summaryTotal");
   var clearCartBtn    = document.getElementById("clearCartBtn");
@@ -29,15 +29,10 @@
       li.className = "cart-item";
       li.dataset.productId = item.productId;
 
-      var platformLabel = item.platform
-        ? item.platform.split(",").map(function (p) { return p.toUpperCase(); }).join(" / ")
-        : "";
-
       li.innerHTML =
         '<img class="cart-item-img" src="' + item.image + '" alt="' + item.name + '" />' +
         '<div class="cart-item-info">' +
           '<h4 class="cart-item-name">' + item.name + "</h4>" +
-          (platformLabel ? '<p class="cart-item-platform">' + platformLabel + "</p>" : "") +
           '<p class="cart-item-unit-price">Unit price: <span>' + fmt(item.price) + "</span></p>" +
           '<div class="qty-stepper">' +
             '<button class="qty-btn qty-minus" aria-label="Decrease quantity">&#8722;</button>' +
@@ -51,66 +46,109 @@
         "</div>";
 
       li.querySelector(".qty-minus").addEventListener("click", function () {
-        if (item.quantity <= 1) {
-          window.gbCart.remove(item.productId);
-        } else {
-          window.gbCart.updateQuantity(item.productId, -1);
-        }
+        if (item.quantity <= 1) { window.gbCart.remove(item.productId); }
+        else { window.gbCart.updateQuantity(item.productId, -1); }
         render();
       });
-
       li.querySelector(".qty-plus").addEventListener("click", function () {
-        window.gbCart.updateQuantity(item.productId, 1);
-        render();
+        window.gbCart.updateQuantity(item.productId, 1); render();
       });
-
       li.querySelector(".remove-btn").addEventListener("click", function () {
-        window.gbCart.remove(item.productId);
-        render();
+        window.gbCart.remove(item.productId); render();
       });
 
       itemList.appendChild(li);
     });
 
-    // Update summary
     var subtotal = items.reduce(function (sum, i) { return sum + i.price * i.quantity; }, 0);
     summarySubtotal.textContent = fmt(subtotal);
     summaryTotal.textContent    = fmt(subtotal);
   }
 
-  // Clear cart
   if (clearCartBtn) {
     clearCartBtn.addEventListener("click", function () {
       if (confirm("Remove all items from your cart?")) {
-        window.gbCart.clear();
-        render();
+        window.gbCart.clear(); render();
       }
     });
   }
 
-  // Checkout placeholder
   if (checkoutBtn) {
     checkoutBtn.addEventListener("click", function () {
-      var overlay = document.createElement("div");
-      overlay.className = "modal-overlay";
-      overlay.innerHTML =
-        '<div class="modal-content checkout-modal">' +
-          '<span class="modal-badge">Coming Soon</span>' +
-          "<h2>Checkout</h2>" +
-          "<p>Secure checkout will be available once the PHP &amp; MySQL backend is connected.</p>" +
-          "<p>To place an order now, please <a href=\"contact.html\">contact us</a> directly.</p>" +
-          '<button class="btn-primary" id="closeCheckoutModal" style="width:100%;margin-top:8px">Got it</button>' +
-        "</div>";
+      var items    = window.gbCart ? window.gbCart.getItems() : [];
+      var subtotal = items.reduce(function (s, i) { return s + i.price * i.quantity; }, 0);
 
-      overlay.querySelector("#closeCheckoutModal").addEventListener("click", function () {
-        overlay.remove();
-      });
-      overlay.addEventListener("click", function (e) {
-        if (e.target === overlay) overlay.remove();
-      });
+      if (!items.length) return;
 
-      document.body.appendChild(overlay);
+      // Build item list string for the confirmation
+      var itemLines = items.map(function (i) {
+        return "• " + i.name + " x" + i.quantity + " — " + fmt(i.price * i.quantity);
+      }).join("\n");
+
+      var confirmed = confirm(
+        "Confirm your order?\n\n" +
+        itemLines +
+        "\n\nTotal: " + fmt(subtotal) +
+        "\n\nYour order will be marked as paid immediately."
+      );
+
+      if (!confirmed) return;
+
+      checkoutBtn.disabled    = true;
+      checkoutBtn.textContent = "Placing order…";
+
+      fetch("api/checkout.php", {
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ items: items }),
+      })
+        .then(function (res) { return res.json(); })
+        .then(function (json) {
+          if (json.redirect) {
+            window.location.href = json.redirect; return;
+          }
+          if (!json.ok) throw new Error(json.error || "Order failed.");
+
+          window.gbCart.clear();
+          showOrderSuccess(json.order_number, subtotal);
+        })
+        .catch(function (err) {
+          checkoutBtn.disabled    = false;
+          checkoutBtn.textContent = "Proceed to Checkout";
+          showErrorModal(err.message || "Something went wrong. Please try again.");
+        });
     });
+  }
+
+  function showOrderSuccess(orderNumber, total) {
+    var overlay = document.createElement("div");
+    overlay.className = "modal-overlay";
+    overlay.innerHTML =
+      '<div class="modal-content checkout-modal" style="text-align:center">' +
+        '<span class="modal-badge" style="background:#4ade80;color:#14532d">&#10003; Order Placed</span>' +
+        "<h2>Thank you!</h2>" +
+        "<p>Your order has been placed and marked as paid.</p>" +
+        '<p style="font-size:1.1rem;font-weight:700;letter-spacing:0.05em">' + orderNumber + "</p>" +
+        '<p style="color:var(--text-muted)">Total: ₱' + parseInt(total).toLocaleString() + "</p>" +
+        '<a href="profile.php" class="btn-primary" style="display:block;margin-top:16px">View My Orders</a>' +
+        '<a href="products.php" class="btn-secondary" style="display:block;margin-top:8px">Continue Shopping</a>' +
+      "</div>";
+    document.body.appendChild(overlay);
+    render(); // refresh cart UI (will show empty)
+  }
+
+  function showErrorModal(msg) {
+    var overlay = document.createElement("div");
+    overlay.className = "modal-overlay";
+    overlay.innerHTML =
+      '<div class="modal-content" style="text-align:center">' +
+        '<span class="modal-badge" style="background:#ff5555;color:#fff">Error</span>' +
+        "<h2>Order Failed</h2>" +
+        "<p>" + msg + "</p>" +
+        '<button class="btn-primary" style="margin-top:16px" id="closeErrModal">Close</button>' +
+      "</div>";
+    overlay.querySelector("#closeErrModal").addEventListener("click", function () { overlay.remove(); });
+    document.body.appendChild(overlay);
   }
 
   render();

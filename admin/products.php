@@ -30,14 +30,17 @@ $products = $pdo->query("
     <!-- Sidebar -->
     <aside class="admin-sidebar">
       <div class="admin-brand">
-        <a href="../index.html" class="logo">Game<span>Blitz</span></a>
+        <a href="../index.php" class="logo">Game<span>Blitz</span></a>
         <span class="admin-badge">Admin</span>
       </div>
       <nav class="admin-nav">
         <ul>
+          <li><a href="index.php" class="admin-nav-link">&#128202; Dashboard</a></li>
           <li><a href="products.php" class="admin-nav-link active">&#127918; Products</a></li>
+          <li><a href="users.php" class="admin-nav-link">&#128101; Users</a></li>
+          <li><a href="inquiries.php" class="admin-nav-link">&#128140; Inquiries</a></li>
           <li class="admin-nav-divider"></li>
-          <li><a href="../index.html" class="admin-nav-link">&#127968; View Store</a></li>
+          <li><a href="../index.php" class="admin-nav-link">&#127968; View Store</a></li>
           <li><a href="../api/logout.php" class="admin-nav-link admin-nav-logout">&#128682; Sign Out</a></li>
         </ul>
       </nav>

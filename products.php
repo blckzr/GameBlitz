@@ -54,23 +54,34 @@ function badgeLabel(string $badge, int $price, ?int $sale): string {
 
   <header class="main-header">
     <div class="nav-container">
-      <a href="index.html" class="logo">Game<span>Blitz</span></a>
+      <a href="index.php" class="logo">Game<span>Blitz</span></a>
       <button id="mobileMenuToggle" class="mobile-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
       <nav id="primaryNav">
         <ul>
-          <li><a href="index.html" class="nav-btn">Home</a></li>
+          <li><a href="index.php" class="nav-btn">Home</a></li>
           <li><a href="products.php" class="nav-btn active">Products</a></li>
           <li><a href="contact.html" class="nav-btn">Contact</a></li>
         </ul>
       </nav>
       <div class="nav-actions">
         <?php if ($sessionUser): ?>
-        <a href="api/logout.php" class="nav-action" id="navSignIn" aria-label="Account">
-          <span class="nav-action-icon">&#128100;</span>
-          <span class="nav-action-label"><?= htmlspecialchars(explode(' ', $sessionUser['name'])[0]) ?></span>
-        </a>
+        <div class="nav-user-menu">
+          <a href="profile.php" class="nav-action" id="navSignIn" aria-label="Account">
+            <span class="nav-action-icon">&#128100;</span>
+            <span class="nav-action-label"><?= htmlspecialchars(explode(' ', $sessionUser['name'])[0]) ?> &#9660;</span>
+          </a>
+          <div class="nav-user-dropdown">
+            <a href="profile.php">&#128100; My Profile</a>
+            <a href="profile.php#inquiries">&#128140; My Inquiries</a>
+            <?php if ($sessionUser['is_admin']): ?>
+            <a href="admin/index.php">&#9881; Admin Panel</a>
+            <?php endif; ?>
+            <div class="nav-user-dropdown-divider"></div>
+            <a href="api/logout.php" class="nav-user-dropdown-signout">&#128682; Sign Out</a>
+          </div>
+        </div>
         <?php else: ?>
         <a href="signin.php" class="nav-action" id="navSignIn" aria-label="Sign in">
           <span class="nav-action-icon">&#128100;</span>
@@ -88,7 +99,7 @@ function badgeLabel(string $badge, int $price, ?int $sale): string {
 
   <main>
     <nav class="breadcrumbs" aria-label="Breadcrumb">
-      <a href="index.html">Home</a>
+      <a href="index.php">Home</a>
       <span aria-hidden="true">/</span>
       <span aria-current="page">Products</span>
     </nav>
