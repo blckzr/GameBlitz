@@ -155,6 +155,11 @@
   // ── Nav user dropdown (click to open/close) ───────────────────────────────
 
   document.addEventListener('click', function (e) {
+    // Clear localStorage user on sign-out so stale name is never shown
+    if (e.target.closest('.nav-user-dropdown-signout')) {
+      localStorage.removeItem(USER_KEY);
+    }
+
     var toggle   = e.target.closest('.nav-user-menu > .nav-action');
     var insideDrop = e.target.closest('.nav-user-dropdown');
 

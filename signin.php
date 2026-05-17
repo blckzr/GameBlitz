@@ -72,7 +72,11 @@ if (!empty($_SESSION['user_id'])) {
           </div>
           <div class="password-wrap">
             <input type="password" id="password" name="password" autocomplete="current-password" placeholder="Enter your password" />
-            <button type="button" class="toggle-pw" id="togglePassword" aria-label="Show password">&#128065;</button>
+            <button type="button" class="toggle-pw" id="togglePassword" aria-label="Show password">
+              <svg id="eyeIcon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
           </div>
           <span id="passwordError" class="error-msg" aria-live="polite"></span>
         </div>
