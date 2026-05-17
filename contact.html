@@ -10,48 +10,180 @@
   <body>
     <header class="main-header">
       <div class="nav-container">
-        <div class="logo">Game<span>Blitz</span></div>
-        <nav>
+        <a href="index.html" class="logo">Game<span>Blitz</span></a>
+
+        <button
+          id="mobileMenuToggle"
+          class="mobile-toggle"
+          aria-label="Toggle navigation menu"
+          aria-expanded="false"
+        >
+          <span></span><span></span><span></span>
+        </button>
+
+        <nav id="primaryNav">
           <ul>
             <li><a href="index.html" class="nav-btn">Home</a></li>
             <li><a href="products.html" class="nav-btn">Products</a></li>
-            <li>
-              <a href="contact.html" class="nav-btn active">Contact Us</a>
-            </li>
+            <li><a href="contact.html" class="nav-btn active">Contact</a></li>
           </ul>
         </nav>
+
+        <div class="nav-actions">
+          <a href="signin.html" class="nav-action" id="navSignIn" aria-label="Sign in to your account">
+            <span class="nav-action-icon">&#128100;</span>
+            <span class="nav-action-label">Sign In</span>
+          </a>
+          <a href="cart.html" class="nav-action cart-link" aria-label="View shopping cart">
+            <span class="nav-action-icon">&#128722;</span>
+            <span class="nav-action-label">Cart</span>
+            <span class="cart-badge" id="cartCount">0</span>
+          </a>
+        </div>
       </div>
     </header>
 
     <main>
-      <h2>Contact Support</h2>
-      <p>Have a question about a game? Send us a message!</p>
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href="index.html">Home</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">Contact</span>
+      </nav>
 
-      <form id="contactForm" class="contact-form">
-        <div class="input-group">
-          <label for="email">Email Address</label>
-          <input type="text" id="email" placeholder="example@email.com" />
-          <span id="emailError" class="error-msg"></span>
-        </div>
+      <div class="contact-layout">
+        <section class="contact-intro">
+          <h2>Contact Support</h2>
+          <p>
+            Have a question about a game, order, or warranty? Send us a message
+            and we&rsquo;ll get back to you within 1&ndash;2 business days.
+          </p>
 
-        <div class="input-group">
-          <label for="message">Your Message</label>
-          <textarea
-            id="message"
-            rows="5"
-            placeholder="Type your message here..."
-          ></textarea>
-          <span id="messageError" class="error-msg"></span>
-        </div>
+          <ul class="contact-info">
+            <li>
+              <strong>Email</strong>
+              <span>support@gameblitz.com</span>
+            </li>
+            <li>
+              <strong>Hotline</strong>
+              <span>+63 (2) 8888-0123</span>
+            </li>
+            <li>
+              <strong>Hours</strong>
+              <span>Mon&ndash;Sat, 10:00 AM &ndash; 8:00 PM</span>
+            </li>
+            <li>
+              <strong>Branches</strong>
+              <span>15 stores nationwide</span>
+            </li>
+          </ul>
+        </section>
 
-        <button type="submit" class="submit-btn">Send Message</button>
-      </form>
+        <form id="contactForm" class="contact-form" novalidate>
+          <div class="input-row">
+            <div class="input-group">
+              <label for="name">Full Name</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                autocomplete="name"
+                placeholder="Juan Dela Cruz"
+              />
+              <span id="nameError" class="error-msg" aria-live="polite"></span>
+            </div>
+
+            <div class="input-group">
+              <label for="email">Email Address</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                autocomplete="email"
+                placeholder="example@email.com"
+              />
+              <span id="emailError" class="error-msg" aria-live="polite"></span>
+            </div>
+          </div>
+
+          <div class="input-row">
+            <div class="input-group">
+              <label for="inquiryCategory">Inquiry Type</label>
+              <select id="inquiryCategory" name="category">
+                <option value="">Select a category...</option>
+                <option value="order">Order Issue</option>
+                <option value="product">Product Question</option>
+                <option value="warranty">Warranty / Returns</option>
+                <option value="preorder">Pre-Order</option>
+                <option value="general">General Inquiry</option>
+              </select>
+              <span id="categoryError" class="error-msg" aria-live="polite"></span>
+            </div>
+
+            <div class="input-group">
+              <label for="orderNumber">Order Number <span class="label-hint">(optional)</span></label>
+              <input
+                type="text"
+                id="orderNumber"
+                name="order_number"
+                placeholder="e.g. GB-2026-00123"
+              />
+            </div>
+          </div>
+
+          <div class="input-group">
+            <label for="subject">Subject</label>
+            <input
+              type="text"
+              id="subject"
+              name="subject"
+              placeholder="Brief summary of your inquiry"
+            />
+            <span id="subjectError" class="error-msg" aria-live="polite"></span>
+          </div>
+
+          <div class="input-group">
+            <label for="message">Your Message</label>
+            <textarea
+              id="message"
+              name="message"
+              rows="6"
+              placeholder="Tell us more about what you need..."
+            ></textarea>
+            <span id="messageError" class="error-msg" aria-live="polite"></span>
+          </div>
+
+          <button type="submit" class="submit-btn">Send Message</button>
+        </form>
+      </div>
     </main>
 
     <footer class="main-footer">
-      <p>&copy; 2026 GameBlitz | All Rights Reserved</p>
+      <div class="footer-grid">
+        <div>
+          <p class="footer-brand">Game<span>Blitz</span></p>
+          <p>Your nationwide destination for games, consoles, and gear.</p>
+        </div>
+        <div>
+          <h5>Shop</h5>
+          <ul>
+            <li><a href="products.html">All Games</a></li>
+            <li><a href="products.html">Consoles</a></li>
+            <li><a href="products.html">Accessories</a></li>
+          </ul>
+        </div>
+        <div>
+          <h5>Support</h5>
+          <ul>
+            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="#">Order Tracking</a></li>
+            <li><a href="#">Warranty</a></li>
+          </ul>
+        </div>
+      </div>
+      <p class="footer-bottom">&copy; 2026 GameBlitz | All Rights Reserved</p>
     </footer>
 
+    <script src="js/cart.js"></script>
     <script src="js/contact.js"></script>
   </body>
 </html>

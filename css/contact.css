@@ -1,89 +1,205 @@
-/* --- Contact Form Styling --- */
+/* --- Contact page layout --- */
+.contact-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 40px;
+  align-items: start;
+  margin-top: 8px;
+}
+
+/* --- Contact info sidebar --- */
+.contact-intro h2 {
+  margin-top: 0;
+}
+
+.contact-info {
+  list-style: none;
+  padding: 0;
+  margin: 24px 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.contact-info li {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.contact-info strong {
+  color: var(--accent);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.contact-info span {
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+/* --- Contact form --- */
 .contact-form {
-  background-color: #1a1a1a;
-  padding: 40px;
-  border-radius: 15px;
-  border: 1px solid #333;
-  max-width: 600px;
-  margin: 20px auto;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+  background-color: var(--bg-elevated);
+  padding: 36px 40px;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-default);
+  box-shadow: var(--shadow-card);
+}
+
+/* Two-column row */
+.input-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
 }
 
 .input-group {
-  margin-bottom: 25px;
-  text-align: left;
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .input-group label {
-  display: block;
-  color: #bb86fc;
-  margin-bottom: 8px;
-  font-weight: bold;
+  color: var(--accent);
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.label-hint {
+  color: var(--text-muted);
+  font-weight: 400;
+  text-transform: none;
+  letter-spacing: 0;
 }
 
 .input-group input,
-.input-group textarea {
-  width: 100%;
-  padding: 12px;
-  background-color: #0f0f0f;
-  border: 2px solid #333;
-  border-radius: 8px;
-  color: white;
-  font-size: 1rem;
-  transition: border-color 0.3s ease;
+.input-group textarea,
+.input-group select {
+  padding: 12px 14px;
+  background-color: var(--bg-base);
+  border: 2px solid var(--border-default);
+  border-radius: var(--radius-sm);
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-group input::placeholder,
+.input-group textarea::placeholder {
+  color: var(--text-muted);
 }
 
 .input-group input:focus,
-.input-group textarea:focus {
-  border-color: #bb86fc;
-  outline: none;
+.input-group textarea:focus,
+.input-group select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
 }
 
-/* Error Message Styling */
+.input-group select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23bb86fc' d='M0 0l6 8 6-8z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 14px center;
+  padding-right: 36px;
+}
+
+.input-group select option {
+  background-color: var(--bg-elevated);
+}
+
+/* Error messages */
 .error-msg {
-  color: #ff5555;
-  font-size: 0.85rem;
-  margin-top: 5px;
-  display: block;
-  min-height: 1.2rem;
+  color: var(--danger);
+  font-size: 0.82rem;
+  min-height: 1rem;
 }
 
+/* Submit button */
 .submit-btn {
-  background-color: #bb86fc;
+  width: 100%;
+  padding: 13px;
+  background-color: var(--accent);
   color: #121212;
   border: none;
-  padding: 12px 30px;
+  border-radius: var(--radius-sm);
   font-size: 1rem;
-  font-weight: bold;
-  border-radius: 8px;
+  font-weight: 700;
   cursor: pointer;
-  transition: 0.3s;
-  width: 100%;
+  transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  margin-top: 4px;
 }
 
 .submit-btn:hover {
-  background-color: #d7b4ff;
+  background-color: var(--accent-bright);
   transform: translateY(-2px);
-  box-shadow: 0 0 15px rgba(187, 134, 252, 0.4);
+  box-shadow: 0 6px 20px rgba(187, 134, 252, 0.35);
 }
 
+.submit-btn:active {
+  transform: translateY(0);
+}
+
+/* --- Confirmation modal --- */
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.85);
+  inset: 0;
+  background: rgba(0, 0, 0, 0.88);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 9999;
+  padding: 20px;
 }
 
 .modal-content {
-  background: #1a1a1a;
+  background: var(--bg-elevated);
   padding: 40px;
-  border-radius: 15px;
-  border: 2px solid #bb86fc;
+  border-radius: var(--radius-lg);
+  border: 2px solid var(--accent);
   text-align: center;
+  max-width: 420px;
+  width: 100%;
+  animation: fadeInModal 0.25s ease;
+}
+
+.modal-content h2 {
+  color: var(--accent);
+  margin-top: 0;
+}
+
+@keyframes fadeInModal {
+  from {
+    opacity: 0;
+    transform: scale(0.94);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* --- Responsive --- */
+@media (max-width: 860px) {
+  .contact-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-form {
+    padding: 28px 24px;
+  }
+}
+
+@media (max-width: 560px) {
+  .input-row {
+    grid-template-columns: 1fr;
+  }
 }

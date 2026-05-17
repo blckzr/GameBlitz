@@ -1,48 +1,89 @@
-// Requirement: Select elements via DOM
-const contactForm = document.getElementById("contactForm");
-const emailField = document.getElementById("email");
-const messageField = document.getElementById("message");
+// Contact form validation
+// Fields map to future `inquiries` table: name, email, category, order_number, subject, message
+(function () {
+  var form = document.getElementById("contactForm");
+  if (!form) return;
 
-contactForm.addEventListener("submit", (event) => {
-  event.preventDefault(); // Stop page refresh
+  var fields = {
+    name: document.getElementById("name"),
+    email: document.getElementById("email"),
+    category: document.getElementById("inquiryCategory"),
+    subject: document.getElementById("subject"),
+    message: document.getElementById("message"),
+  };
 
-  document.getElementById("emailError").textContent = "";
-  document.getElementById("messageError").textContent = "";
+  var errors = {
+    name: document.getElementById("nameError"),
+    email: document.getElementById("emailError"),
+    category: document.getElementById("categoryError"),
+    subject: document.getElementById("subjectError"),
+    message: document.getElementById("messageError"),
+  };
 
-  let hasError = false;
-
-  if (!emailField.value.includes("@") || emailField.value.length < 5) {
-    document.getElementById("emailError").textContent =
-      "Please enter a valid email address.";
-    hasError = true;
+  function clearErrors() {
+    Object.values(errors).forEach(function (el) {
+      if (el) el.textContent = "";
+    });
   }
 
-  if (messageField.value.trim() === "") {
-    document.getElementById("messageError").textContent =
-      "Please enter a message.";
-    hasError = true;
+  function setError(key, msg) {
+    if (errors[key]) errors[key].textContent = msg;
   }
 
-  if (!hasError) {
-    showConfirmationModal();
+  function isValidEmail(val) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val.trim());
   }
-});
 
-function showConfirmationModal() {
-  const overlay = document.createElement("div");
-  overlay.className = "modal-overlay";
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    clearErrors();
 
-  overlay.innerHTML = `
-        <div class="modal-content">
-            <h2 style="color: #bb86fc;">Message Received!</h2>
-            <p>Thank you for contacting GameBlitz. We will get back to you soon.</p>
-            <p style="font-size: 0.9rem; color: #888;">Returning to Home in 3 seconds...</p>
-        </div>
-    `;
+    var hasError = false;
 
-  document.body.appendChild(overlay);
+    if (!fields.name || fields.name.value.trim().length < 2) {
+      setError("name", "Please enter your full name.");
+      hasError = true;
+    }
 
-  setTimeout(() => {
-    window.location.href = "index.html";
-  }, 3000);
-}
+    if (!fields.email || !isValidEmail(fields.email.value)) {
+      setError("email", "Please enter a valid email address.");
+      hasError = true;
+    }
+
+    if (!fields.category || fields.category.value === "") {
+      setError("category", "Please select an inquiry type.");
+      hasError = true;
+    }
+
+    if (!fields.subject || fields.subject.value.trim().length < 3) {
+      setError("subject", "Please enter a subject (at least 3 characters).");
+      hasError = true;
+    }
+
+    if (!fields.message || fields.message.value.trim() === "") {
+      setError("message", "Please enter your message.");
+      hasError = true;
+    }
+
+    if (!hasError) {
+      showConfirmationModal();
+    }
+  });
+
+  function showConfirmationModal() {
+    var overlay = document.createElement("div");
+    overlay.className = "modal-overlay";
+    overlay.innerHTML =
+      '<div class="modal-content">' +
+        "<h2>Message Received!</h2>" +
+        "<p>Thank you for contacting GameBlitz. We will get back to you within 1&ndash;2 business days.</p>" +
+        '<p style="font-size:0.9rem;color:var(--text-muted)">Returning to Home in 3 seconds&hellip;</p>' +
+      "</div>";
+
+    document.body.appendChild(overlay);
+
+    setTimeout(function () {
+      window.location.href = "index.html";
+    }, 3000);
+  }
+})();

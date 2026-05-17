@@ -10,70 +10,356 @@
   <body>
     <header class="main-header">
       <div class="nav-container">
-        <div class="logo">Game<span>Blitz</span></div>
-        <nav>
+        <a href="index.html" class="logo">Game<span>Blitz</span></a>
+
+        <button
+          id="mobileMenuToggle"
+          class="mobile-toggle"
+          aria-label="Toggle navigation menu"
+          aria-expanded="false"
+        >
+          <span></span><span></span><span></span>
+        </button>
+
+        <nav id="primaryNav">
           <ul>
             <li><a href="index.html" class="nav-btn">Home</a></li>
             <li><a href="products.html" class="nav-btn active">Products</a></li>
-            <li><a href="contact.html" class="nav-btn">Contact Us</a></li>
+            <li><a href="contact.html" class="nav-btn">Contact</a></li>
           </ul>
         </nav>
+
+        <div class="nav-actions">
+          <a href="signin.html" class="nav-action" id="navSignIn" aria-label="Sign in to your account">
+            <span class="nav-action-icon">&#128100;</span>
+            <span class="nav-action-label">Sign In</span>
+          </a>
+          <a href="cart.html" class="nav-action cart-link" aria-label="View shopping cart">
+            <span class="nav-action-icon">&#128722;</span>
+            <span class="nav-action-label">Cart</span>
+            <span class="cart-badge" id="cartCount">0</span>
+          </a>
+        </div>
       </div>
     </header>
 
     <main>
+      <nav class="breadcrumbs" aria-label="Breadcrumb">
+        <a href="index.html">Home</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">Products</span>
+      </nav>
+
       <h2>Game Collection</h2>
 
-      <div class="search-container">
-        <input type="text" id="gameSearch" placeholder="Search for a game..." />
-        <p id="searchFeedback"></p>
+      <div class="filter-bar">
+        <div class="search-container">
+          <input
+            type="search"
+            id="gameSearch"
+            placeholder="Search for a game..."
+            aria-label="Search games"
+          />
+          <p id="searchFeedback" aria-live="polite"></p>
+        </div>
+
+        <div class="filter-controls">
+          <label class="filter-field">
+            <span>Platform</span>
+            <select id="platformFilter">
+              <option value="">All Platforms</option>
+              <option value="ps5">PlayStation 5</option>
+              <option value="xbox">Xbox Series X|S</option>
+              <option value="switch">Nintendo Switch</option>
+              <option value="pc">PC</option>
+            </select>
+          </label>
+
+          <label class="filter-field">
+            <span>Category</span>
+            <select id="categoryFilter">
+              <option value="">All Categories</option>
+              <option value="rpg">RPG</option>
+              <option value="action">Action</option>
+              <option value="horror">Horror</option>
+              <option value="indie">Indie</option>
+            </select>
+          </label>
+
+          <label class="filter-field">
+            <span>Sort by</span>
+            <select id="sortControl">
+              <option value="featured">Featured</option>
+              <option value="price-asc">Price: Low to High</option>
+              <option value="price-desc">Price: High to Low</option>
+              <option value="name-asc">Name: A–Z</option>
+            </select>
+          </label>
+        </div>
       </div>
 
       <div id="productGrid" class="product-grid">
-        <div class="product-card" data-name="Elden Ring">
-          <img src="assets/img/elden_ring_shadow.jpg" alt="Elden Ring" />
-          <h4>Elden Ring</h4>
-        </div>
-        <div class="product-card" data-name="Final Fantasy VII">
-          <img src="assets/img/ff7rebirth.jpg" alt="FF7" />
-          <h4>Final Fantasy VII</h4>
-        </div>
-        <div class="product-card" data-name="Spider-Man 2">
-          <img src="assets/img/spider-man-2.jpg" alt="Spider-Man 2" />
-          <h4>Spider-Man 2</h4>
-        </div>
-        <div class="product-card" data-name="Monster Hunter Wilds">
-          <img
-            src="assets/img/monsterhunterwilds.jpg"
-            alt="Monster Hunter Wilds"
-          />
-          <h4>Monster Hunter Wilds</h4>
-        </div>
-        <div class="product-card" data-name="Cyberpunk 2077">
-          <img src="assets/img/cyberpunk.jpg" alt="Cyberpunk 2077" />
-          <h4>Cyberpunk 2077</h4>
-        </div>
-        <div class="product-card" data-name="Resident Evil Requiem">
-          <img src="assets/img/re9.jpg" alt="Resident Evil Requiem" />
-          <h4>Resident Evil Requiem</h4>
-        </div>
-        <div class="product-card" data-name="Hollow Knight Silksong">
-          <img
-            src="assets/img/hollowknightsilksong.jpg"
-            alt="Hollow Knight Silksong"
-          />
-          <h4>Hollow Knight Silksong</h4>
-        </div>
-        <div class="product-card" data-name="Clair Obscur: Expedition 33">
-          <img
-            src="assets/img/clair-obscur.jpg"
-            alt="Clair Obscur: Expedition 33"
-          />
-          <h4>Clair Obscur: Expedition 33</h4>
-        </div>
+        <article
+          class="product-card"
+          data-product-id="1"
+          data-name="Elden Ring: Shadow of the Erdtree"
+          data-price="3495"
+          data-sale-price=""
+          data-platform="ps5,xbox,pc"
+          data-category="rpg"
+          data-stock="14"
+          data-badge="hot"
+        >
+          <div class="card-media">
+            <span class="card-badge badge-hot">Hot</span>
+            <img src="assets/img/elden_ring_shadow.jpg" alt="Elden Ring: Shadow of the Erdtree" />
+          </div>
+          <div class="card-body">
+            <div class="card-platforms" aria-label="Platforms">
+              <span class="platform-tag">PS5</span>
+              <span class="platform-tag">Xbox</span>
+              <span class="platform-tag">PC</span>
+            </div>
+            <h4 class="card-title">Elden Ring: Shadow of the Erdtree</h4>
+            <p class="card-price">
+              <span class="price-current">&#8369;3,495</span>
+            </p>
+            <button class="add-to-cart" type="button">Add to Cart</button>
+          </div>
+        </article>
+
+        <article
+          class="product-card"
+          data-product-id="2"
+          data-name="Final Fantasy VII Rebirth"
+          data-price="3295"
+          data-sale-price=""
+          data-platform="ps5"
+          data-category="rpg"
+          data-stock="9"
+        >
+          <div class="card-media">
+            <img src="assets/img/ff7rebirth.jpg" alt="Final Fantasy VII Rebirth" />
+          </div>
+          <div class="card-body">
+            <div class="card-platforms" aria-label="Platforms">
+              <span class="platform-tag">PS5</span>
+            </div>
+            <h4 class="card-title">Final Fantasy VII Rebirth</h4>
+            <p class="card-price">
+              <span class="price-current">&#8369;3,295</span>
+            </p>
+            <button class="add-to-cart" type="button">Add to Cart</button>
+          </div>
+        </article>
+
+        <article
+          class="product-card"
+          data-product-id="3"
+          data-name="Marvel's Spider-Man 2"
+          data-price="2995"
+          data-sale-price="2495"
+          data-platform="ps5"
+          data-category="action"
+          data-stock="22"
+          data-badge="sale"
+        >
+          <div class="card-media">
+            <span class="card-badge badge-sale">-17%</span>
+            <img src="assets/img/spider-man-2.jpg" alt="Marvel's Spider-Man 2" />
+          </div>
+          <div class="card-body">
+            <div class="card-platforms" aria-label="Platforms">
+              <span class="platform-tag">PS5</span>
+            </div>
+            <h4 class="card-title">Marvel's Spider-Man 2</h4>
+            <p class="card-price">
+              <span class="price-current">&#8369;2,495</span>
+              <span class="price-original">&#8369;2,995</span>
+            </p>
+            <button class="add-to-cart" type="button">Add to Cart</button>
+          </div>
+        </article>
+
+        <article
+          class="product-card"
+          data-product-id="4"
+          data-name="Monster Hunter Wilds"
+          data-price="3495"
+          data-sale-price=""
+          data-platform="ps5,xbox,pc"
+          data-category="action"
+          data-stock="0"
+          data-badge="preorder"
+        >
+          <div class="card-media">
+            <span class="card-badge badge-preorder">Pre-Order</span>
+            <img src="assets/img/monsterhunterwilds.jpg" alt="Monster Hunter Wilds" />
+          </div>
+          <div class="card-body">
+            <div class="card-platforms" aria-label="Platforms">
+              <span class="platform-tag">PS5</span>
+              <span class="platform-tag">Xbox</span>
+              <span class="platform-tag">PC</span>
+            </div>
+            <h4 class="card-title">Monster Hunter Wilds</h4>
+            <p class="card-price">
+              <span class="price-current">&#8369;3,495</span>
+            </p>
+            <button class="add-to-cart" type="button">Pre-Order Now</button>
+          </div>
+        </article>
+
+        <article
+          class="product-card"
+          data-product-id="5"
+          data-name="Cyberpunk 2077: Ultimate Edition"
+          data-price="1995"
+          data-sale-price="1495"
+          data-platform="ps5,xbox,pc"
+          data-category="rpg"
+          data-stock="31"
+          data-badge="sale"
+        >
+          <div class="card-media">
+            <span class="card-badge badge-sale">-25%</span>
+            <img src="assets/img/cyberpunk.jpg" alt="Cyberpunk 2077 Ultimate Edition" />
+          </div>
+          <div class="card-body">
+            <div class="card-platforms" aria-label="Platforms">
+              <span class="platform-tag">PS5</span>
+              <span class="platform-tag">Xbox</span>
+              <span class="platform-tag">PC</span>
+            </div>
+            <h4 class="card-title">Cyberpunk 2077: Ultimate Edition</h4>
+            <p class="card-price">
+              <span class="price-current">&#8369;1,495</span>
+              <span class="price-original">&#8369;1,995</span>
+            </p>
+            <button class="add-to-cart" type="button">Add to Cart</button>
+          </div>
+        </article>
+
+        <article
+          class="product-card"
+          data-product-id="6"
+          data-name="Resident Evil Requiem"
+          data-price="3495"
+          data-sale-price=""
+          data-platform="ps5,xbox,pc"
+          data-category="horror"
+          data-stock="0"
+          data-badge="preorder"
+        >
+          <div class="card-media">
+            <span class="card-badge badge-preorder">Pre-Order</span>
+            <img src="assets/img/re9.jpg" alt="Resident Evil Requiem" />
+          </div>
+          <div class="card-body">
+            <div class="card-platforms" aria-label="Platforms">
+              <span class="platform-tag">PS5</span>
+              <span class="platform-tag">Xbox</span>
+              <span class="platform-tag">PC</span>
+            </div>
+            <h4 class="card-title">Resident Evil Requiem</h4>
+            <p class="card-price">
+              <span class="price-current">&#8369;3,495</span>
+            </p>
+            <button class="add-to-cart" type="button">Pre-Order Now</button>
+          </div>
+        </article>
+
+        <article
+          class="product-card"
+          data-product-id="7"
+          data-name="Hollow Knight: Silksong"
+          data-price="1295"
+          data-sale-price=""
+          data-platform="ps5,switch,pc"
+          data-category="indie"
+          data-stock="48"
+          data-badge="new"
+        >
+          <div class="card-media">
+            <span class="card-badge badge-new">New</span>
+            <img src="assets/img/hollowknightsilksong.jpg" alt="Hollow Knight: Silksong" />
+          </div>
+          <div class="card-body">
+            <div class="card-platforms" aria-label="Platforms">
+              <span class="platform-tag">PS5</span>
+              <span class="platform-tag">Switch</span>
+              <span class="platform-tag">PC</span>
+            </div>
+            <h4 class="card-title">Hollow Knight: Silksong</h4>
+            <p class="card-price">
+              <span class="price-current">&#8369;1,295</span>
+            </p>
+            <button class="add-to-cart" type="button">Add to Cart</button>
+          </div>
+        </article>
+
+        <article
+          class="product-card"
+          data-product-id="8"
+          data-name="Clair Obscur: Expedition 33"
+          data-price="2995"
+          data-sale-price=""
+          data-platform="ps5,xbox,pc"
+          data-category="rpg"
+          data-stock="17"
+          data-badge="new"
+        >
+          <div class="card-media">
+            <span class="card-badge badge-new">New</span>
+            <img src="assets/img/clair-obscur.jpg" alt="Clair Obscur: Expedition 33" />
+          </div>
+          <div class="card-body">
+            <div class="card-platforms" aria-label="Platforms">
+              <span class="platform-tag">PS5</span>
+              <span class="platform-tag">Xbox</span>
+              <span class="platform-tag">PC</span>
+            </div>
+            <h4 class="card-title">Clair Obscur: Expedition 33</h4>
+            <p class="card-price">
+              <span class="price-current">&#8369;2,995</span>
+            </p>
+            <button class="add-to-cart" type="button">Add to Cart</button>
+          </div>
+        </article>
       </div>
+
+      <p id="emptyState" class="empty-state" hidden>
+        No games match your filters. Try clearing them.
+      </p>
     </main>
 
+    <footer class="main-footer">
+      <div class="footer-grid">
+        <div>
+          <p class="footer-brand">Game<span>Blitz</span></p>
+          <p>Your nationwide destination for games, consoles, and gear.</p>
+        </div>
+        <div>
+          <h5>Shop</h5>
+          <ul>
+            <li><a href="products.html">All Games</a></li>
+            <li><a href="products.html">Consoles</a></li>
+            <li><a href="products.html">Accessories</a></li>
+          </ul>
+        </div>
+        <div>
+          <h5>Support</h5>
+          <ul>
+            <li><a href="contact.html">Contact Us</a></li>
+            <li><a href="#">Order Tracking</a></li>
+            <li><a href="#">Warranty</a></li>
+          </ul>
+        </div>
+      </div>
+      <p class="footer-bottom">&copy; 2026 GameBlitz | All Rights Reserved</p>
+    </footer>
+
+    <script src="js/cart.js"></script>
     <script src="js/products.js"></script>
   </body>
 </html>
