@@ -109,7 +109,10 @@ function badgeLabel(string $badge, int $price, ?int $sale): string {
     <div class="filter-bar">
       <div class="search-container">
         <span class="filter-label">Search</span>
-        <input type="search" id="gameSearch" placeholder="Search for a game&hellip;" aria-label="Search games" />
+        <div class="search-input-wrap">
+          <input type="search" id="gameSearch" placeholder="Search for a game&hellip;" aria-label="Search games" />
+          <span class="search-spinner" id="searchSpinner" hidden aria-hidden="true"></span>
+        </div>
         <p id="searchFeedback" aria-live="polite"></p>
       </div>
 

@@ -22,6 +22,35 @@
   letter-spacing: 0.5px;
 }
 
+.search-input-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-input-wrap #gameSearch {
+  flex: 1;
+  padding-right: 40px;
+}
+
+.search-spinner {
+  position: absolute;
+  right: 12px;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(187, 134, 252, 0.3);
+  border-top-color: var(--accent, #bb86fc);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+.search-spinner[hidden] { display: none; }
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 #gameSearch {
   width: 100%;
   padding: 12px 16px;
