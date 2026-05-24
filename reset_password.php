@@ -5,13 +5,42 @@ if (!empty($_SESSION['user_id'])) {
     header('Location: index.php');
     exit;
 }
+
+require_once __DIR__ . '/database/db.php';
+
+$token   = trim($_GET['token'] ?? '');
+$isValid = false;
+$reason  = '';
+
+if (!$token || !ctype_xdigit($token) || strlen($token) !== 64) {
+    $reason = 'Invalid reset link.';
+} else {
+    $stmt = $pdo->prepare("
+        SELECT pr.user_id, pr.expires_at, u.email
+        FROM   password_resets pr
+        JOIN   users u ON u.user_id = pr.user_id
+        WHERE  pr.token = ?
+        LIMIT  1
+    ");
+    $stmt->execute([$token]);
+    $row = $stmt->fetch();
+
+    if (!$row) {
+        $reason = 'This reset link is invalid or has already been used.';
+    } elseif (strtotime($row['expires_at']) < time()) {
+        $reason = 'This reset link has expired. Please request a new one.';
+    } else {
+        $isValid    = true;
+        $userEmail  = $row['email'];
+    }
+}
 ?>
 <!doctype html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Create Account | GameBlitz</title>
+  <title>Reset Password | GameBlitz</title>
   <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="css/auth.css" />
 </head>
@@ -30,7 +59,7 @@ if (!empty($_SESSION['user_id'])) {
         </ul>
       </nav>
       <div class="nav-actions">
-        <a href="signin.php" class="nav-action" id="navSignIn" aria-label="Sign in">
+        <a href="signin.php" class="nav-action" aria-label="Sign in">
           <span class="nav-action-icon">&#128100;</span>
           <span class="nav-action-label">Sign In</span>
         </a>
@@ -47,63 +76,50 @@ if (!empty($_SESSION['user_id'])) {
     <div class="auth-card">
       <div class="auth-header">
         <p class="auth-logo">Game<span>Blitz</span></p>
-        <h1>Create an account</h1>
-        <p class="auth-subtitle">Join GameBlitz and start building your library</p>
+        <h1>Reset your password</h1>
+
+        <?php if ($isValid): ?>
+        <p class="auth-subtitle">Setting a new password for <strong><?= htmlspecialchars($userEmail) ?></strong></p>
+        <?php else: ?>
+        <p class="auth-subtitle" style="color:#f87171"><?= htmlspecialchars($reason) ?></p>
+        <?php endif; ?>
       </div>
 
-      <form id="registerForm" class="auth-form" novalidate>
-        <div class="input-group">
-          <label for="fullName">Full Name</label>
-          <input type="text" id="fullName" name="name" autocomplete="name" placeholder="Juan Dela Cruz" />
-          <span id="nameError" class="error-msg" aria-live="polite"></span>
-        </div>
+      <?php if ($isValid): ?>
+      <form id="resetForm" class="auth-form" novalidate>
+        <input type="hidden" name="token" value="<?= htmlspecialchars($token) ?>" />
 
         <div class="input-group">
-          <label for="email">Email Address</label>
-          <input type="email" id="email" name="email" autocomplete="email" placeholder="example@email.com" />
-          <span id="emailError" class="error-msg" aria-live="polite"></span>
-        </div>
-
-        <div class="input-group">
-          <label for="password">Password</label>
+          <label for="password">New Password</label>
           <div class="password-wrap">
             <input type="password" id="password" name="password" autocomplete="new-password" placeholder="At least 8 characters" />
-            <button type="button" class="toggle-pw" id="togglePassword" aria-label="Show password">&#128065;</button>
           </div>
           <span id="passwordError" class="error-msg" aria-live="polite"></span>
-          <div class="password-strength" id="passwordStrength" hidden>
-            <div class="strength-bar">
-              <div class="strength-fill" id="strengthFill"></div>
-            </div>
-            <span class="strength-label" id="strengthLabel"></span>
-          </div>
         </div>
 
         <div class="input-group">
-          <label for="confirmPassword">Confirm Password</label>
+          <label for="confirmPassword">Confirm New Password</label>
           <div class="password-wrap">
-            <input type="password" id="confirmPassword" name="confirm_password" autocomplete="new-password" placeholder="Repeat your password" />
-            <button type="button" class="toggle-pw" id="toggleConfirm" aria-label="Show password">&#128065;</button>
+            <input type="password" id="confirmPassword" name="password_confirm" autocomplete="new-password" placeholder="Repeat your password" />
           </div>
           <span id="confirmError" class="error-msg" aria-live="polite"></span>
         </div>
 
-        <label class="checkbox-label">
-          <input type="checkbox" id="agreeTerms" name="terms" />
-          <span>I agree to the <a href="terms.php" target="_blank">Terms of Service</a> and <a href="privacy.php" target="_blank">Privacy Policy</a></span>
-        </label>
-        <span id="termsError" class="error-msg" aria-live="polite"></span>
-
-        <button type="submit" class="submit-btn">Create Account</button>
+        <button type="submit" class="submit-btn" id="resetBtn">Update Password</button>
       </form>
+      <?php else: ?>
+      <a href="forgot_password.php" class="submit-btn" style="display:block;text-align:center;text-decoration:none;margin-top:1rem">Request a new link</a>
+      <?php endif; ?>
 
       <p class="auth-switch">
-        Already have an account? <a href="signin.php">Sign in &rsaquo;</a>
+        Remembered it? <a href="signin.php">Back to sign in &rsaquo;</a>
       </p>
     </div>
   </main>
 
   <script src="js/cart.js"></script>
-  <script src="js/register.js"></script>
+  <?php if ($isValid): ?>
+  <script src="js/reset_password.js"></script>
+  <?php endif; ?>
 </body>
 </html>

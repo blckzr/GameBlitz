@@ -68,7 +68,7 @@ if (!empty($_SESSION['user_id'])) {
         <div class="input-group">
           <div class="label-row">
             <label for="password">Password</label>
-            <a href="#" class="label-link" id="forgotPasswordLink">Forgot password?</a>
+            <a href="forgot_password.php" class="label-link" id="forgotPasswordLink">Forgot password?</a>
           </div>
           <div class="password-wrap">
             <input type="password" id="password" name="password" autocomplete="current-password" placeholder="Enter your password" />

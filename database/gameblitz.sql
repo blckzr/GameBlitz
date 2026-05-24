@@ -513,6 +513,32 @@ CREATE TABLE inquiries (
 
 
 -- ------------------------------------------------------------
+-- 11. password_resets
+--     Stores one-time tokens for the "Forgot password" flow.
+--     Token is a 64-char hex string (random_bytes(32) -> bin2hex).
+--     Expires after 1 hour; PHP deletes the row on successful use.
+-- ------------------------------------------------------------
+DROP TABLE IF EXISTS password_resets;
+CREATE TABLE password_resets (
+    token         VARCHAR(64)         NOT NULL,
+    user_id       INT UNSIGNED        NOT NULL,
+    expires_at    TIMESTAMP           NOT NULL,
+    created_at    TIMESTAMP           NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (token),
+    KEY idx_password_resets_user (user_id),
+
+    CONSTRAINT fk_password_resets_user
+        FOREIGN KEY (user_id)
+        REFERENCES  users (user_id)
+        ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_unicode_ci
+  COMMENT='One-time password reset tokens (1-hour expiry)';
+
+
+-- ------------------------------------------------------------
 -- Restore FK checks
 -- ------------------------------------------------------------
 SET FOREIGN_KEY_CHECKS = 1;

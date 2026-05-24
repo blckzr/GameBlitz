@@ -31,12 +31,7 @@
     });
   }
 
-  if (forgotLink) {
-    forgotLink.addEventListener("click", function (e) {
-      e.preventDefault();
-      showInfo("Password reset is not yet available.");
-    });
-  }
+  // forgotLink now navigates to forgot_password.php directly — no JS handler needed
 
   function clearErrors() {
     setError("emailError", "");
