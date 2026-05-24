@@ -102,7 +102,12 @@
         headers: { "Content-Type": "application/json" },
         body:    JSON.stringify({ items: items }),
       })
-        .then(function (res) { return res.json(); })
+        .then(function (res) {
+          if (!res.ok && res.status >= 500) {
+            throw new Error("Server error " + res.status + ". Please try again.");
+          }
+          return res.json();
+        })
         .then(function (json) {
           if (json.redirect) {
             window.location.href = json.redirect; return;
@@ -115,7 +120,7 @@
         .catch(function (err) {
           checkoutBtn.disabled    = false;
           checkoutBtn.textContent = "Proceed to Checkout";
-          showErrorModal(err.message || "Something went wrong. Please try again.");
+          showErrorModal(err.message || "Network error. Please check your connection and try again.");
         });
     });
   }

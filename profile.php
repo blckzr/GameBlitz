@@ -388,7 +388,12 @@ $statusColors = [
       var data = new FormData(form);
 
       fetch('api/profile_update.php', { method: 'POST', body: data })
-        .then(function (res) { return res.json(); })
+        .then(function (res) {
+          if (!res.ok && res.status >= 500) {
+            throw new Error('Server error ' + res.status + '. Please try again.');
+          }
+          return res.json();
+        })
         .then(function (json) {
           submitBtn.disabled    = false;
           submitBtn.textContent = 'Save Changes';

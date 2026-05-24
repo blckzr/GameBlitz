@@ -80,6 +80,9 @@
 
     fetch("api/login.php", { method: "POST", body: body })
       .then(function (res) {
+        if (!res.ok && res.status >= 500) {
+          throw new Error("Server error " + res.status + ". Please try again later.");
+        }
         return res.json();
       })
       .then(function (data) {
@@ -95,8 +98,8 @@
           window.gbAuth.setUser({ name: data.name, email: email });
         showSuccess(data.name, data.is_admin);
       })
-      .catch(function () {
-        setError("passwordError", "Could not connect. Is XAMPP running?");
+      .catch(function (err) {
+        setError("passwordError", err.message || "Could not connect. Is XAMPP running?");
         submitBtn.disabled = false;
         submitBtn.textContent = "Sign In";
       });
@@ -104,7 +107,7 @@
 
   function showSuccess(name, isAdmin) {
     var card = document.querySelector(".auth-card");
-    var dest = isAdmin ? "admin/products.php" : "index.html";
+    var dest = isAdmin ? "admin/products.php" : "index.php";
     card.innerHTML =
       '<div class="auth-success">' +
       '<div class="auth-success-icon">&#10003;</div>' +

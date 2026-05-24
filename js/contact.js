@@ -60,14 +60,19 @@
     var data = new FormData(form);
 
     fetch("api/contact.php", { method: "POST", body: data })
-      .then(function (res) { return res.json(); })
+      .then(function (res) {
+        if (!res.ok && res.status >= 500) {
+          throw new Error("Server error " + res.status + ". Please try again later.");
+        }
+        return res.json();
+      })
       .then(function (json) {
         if (!json.ok) throw new Error(json.error || "Failed to send.");
         showSuccessModal();
       })
       .catch(function (err) {
         if (submitBtn) { submitBtn.disabled = false; submitBtn.textContent = "Send Message"; }
-        setError("message", err.message || "Something went wrong. Please try again.");
+        setError("message", err.message || "Network error. Please check your connection and try again.");
       });
   });
 

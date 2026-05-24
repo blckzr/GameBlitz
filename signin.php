@@ -2,7 +2,7 @@
 session_start();
 
 if (!empty($_SESSION['user_id'])) {
-    $dest = ($_SESSION['role'] === 'admin') ? 'admin/products.php' : 'index.html';
+    $dest = ($_SESSION['role'] === 'admin') ? 'admin/products.php' : 'index.php';
     header('Location: ' . $dest);
     exit;
 }
@@ -19,13 +19,13 @@ if (!empty($_SESSION['user_id'])) {
 <body>
   <header class="main-header">
     <div class="nav-container">
-      <a href="index.html" class="logo">Game<span>Blitz</span></a>
+      <a href="index.php" class="logo">Game<span>Blitz</span></a>
       <button id="mobileMenuToggle" class="mobile-toggle" aria-label="Toggle navigation menu" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
       <nav id="primaryNav">
         <ul>
-          <li><a href="index.html" class="nav-btn">Home</a></li>
+          <li><a href="index.php" class="nav-btn">Home</a></li>
           <li><a href="products.php" class="nav-btn">Products</a></li>
           <li><a href="contact.php" class="nav-btn">Contact</a></li>
         </ul>
